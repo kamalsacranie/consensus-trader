@@ -3,7 +3,7 @@ import logging
 import praw
 import pickle
 from datetime import datetime
-from comment_parser import ParsedComment
+from reddit.comment_parser import ParsedComment
 
 
 class RedditScraper(praw.Reddit):
