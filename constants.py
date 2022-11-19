@@ -8,9 +8,19 @@ TICKER_BLACKLIST = [
     "TV",
     "US",
     "MD",
+    "IPO",
+    "LMFAO",
+    "SPY",
+    "QQQ",
+    "USA",
+    "WSB",
+    "GTFO",
+    "ETF",
+    "FED",
 ]
 
 SUBS_TO_SCRAPE = ["wallstreetbets", "investing", "stocks"]
+# SUBS_TO_SCRAPE = ["investing"]
 
 COMMENT_DF_LENGTH = 1000
 

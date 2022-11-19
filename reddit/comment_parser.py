@@ -5,10 +5,10 @@ from constants import TICKER_BLACKLIST
 
 
 @dataclass
-class ParsedComment(object):
+class ParsedComment:
 
     """
-    ParsedComment object for our redding comment and its methods if it so
+    ParsedComment object for our reddit comment and its methods if it so
     requires. We use a dataclass to pass in a praw comment object and a regex
     of our choice so that we can parse the comment for something specific
     """
@@ -28,6 +28,9 @@ class ParsedComment(object):
 
         # finding all the 2-5 length all caps words in the comment body
         raw_tickers = re.findall(self.regex, self.body)
+
+        # The attribute error is happening somewhere here but I have no idea
+        # why. It seems to be an issue with praw
 
         # parsing through our list of raw tickers. our raw ticker is located in
         # the group of our regex. We get back a list of tickers which we

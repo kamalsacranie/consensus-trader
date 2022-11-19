@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Lock
 
 from praw.models import Subreddit
 from reddit.core import RedditScraper, DfHandler
@@ -11,26 +12,38 @@ class StreamThread:
         self.subreddit = subreddit
         self.stream = sub_instance.stream
         self.handler = DfHandler()
+        # Just temp to debug what error types we get
+        self._lock = Lock()
 
     def comment_df_append(self):
-        for comment in self.stream.comments(skip_existing=True):
-            parsed_comment = ParsedComment(comment, REGEX, reg_group=1)
+        try:
+            for comment in self.stream.comments(skip_existing=True):
+                parsed_comment = ParsedComment(comment, REGEX, reg_group=1)
 
-            # filtering for when someone types in all caps
-            if not parsed_comment.body.isupper():
-                likely_tickers = parsed_comment.likely_tickers
-                if bool(likely_tickers):
-                    self.handler.append_data(parsed_comment)
+                # filtering for when someone types in all caps
+                if not parsed_comment.body.isupper():
+                    likely_tickers = parsed_comment.likely_tickers
+                    if bool(likely_tickers):
+                        self.handler.append_data(parsed_comment)
 
-            # Cropping to be 1000 or length
-            self.handler.sentiment_data = self.handler.sentiment_data.tail(
-                min(
-                    COMMENT_DF_LENGTH,
-                    len(self.handler.sentiment_data.index),
+                # Cropping to be 1000 or length
+                self.handler.sentiment_data = self.handler.sentiment_data.tail(
+                    min(
+                        COMMENT_DF_LENGTH,
+                        len(self.handler.sentiment_data.index),
+                    )
                 )
-            )
 
-            self.handler.pickle_df(dir=f"./shared/{self.subreddit}")
+                self.handler.pickle_df(dir=f"./shared/{self.subreddit}")
+        except AttributeError:
+            print(
+                "This attribute error happens where Parsed comment has no atrribute likey_tickers"
+            )
+        # Just to find the errors we get
+        except Exception as e:
+            with self._lock:
+                while True:
+                    print(e)
 
     def __str__(self) -> str:
         return f"{self.subreddit}"
