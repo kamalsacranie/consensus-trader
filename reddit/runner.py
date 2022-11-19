@@ -17,6 +17,7 @@ class StreamThread:
 
     def comment_df_append(self):
         try:
+            # Streaming all comments live from subreddit
             for comment in self.stream.comments(skip_existing=True):
                 parsed_comment = ParsedComment(comment, REGEX, reg_group=1)
 
@@ -56,7 +57,7 @@ def comment_df_producer(subs: list[str], debug: bool = False) -> None:
     :debug: Enable debug or not
     """
 
-    # site name is the name of your config
+    # Instantiating our praw scraper. site name is the name of your config
     reddit = RedditScraper(site_name="sentimentbot", conf_interp="basic")
 
     if debug:
@@ -68,6 +69,7 @@ def comment_df_producer(subs: list[str], debug: bool = False) -> None:
     subreddits = {sub: reddit.subreddit(sub) for sub in subs}
 
     with ThreadPoolExecutor(len(SUBS_TO_SCRAPE)) as executor:
+        # Using multithreading to scape multiple subs at once
         executor.map(
             lambda i: StreamThread(i[0], i[1]).comment_df_append(),
             subreddits.items(),
@@ -75,4 +77,5 @@ def comment_df_producer(subs: list[str], debug: bool = False) -> None:
 
 
 if __name__ == "__main__":
+    # In case i want to run in isolation
     comment_df_producer(SUBS_TO_SCRAPE)

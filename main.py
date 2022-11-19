@@ -13,6 +13,8 @@ def start_reddit_scraper(debug: bool = False) -> Process:
 
 
 def main():
+    # 1. Scrape,
+    # 2. use NLTK or Vader to use a dictionary to rank
     _ = start_reddit_scraper()
 
 

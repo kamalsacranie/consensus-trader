@@ -7,6 +7,7 @@ from reddit.comment_parser import ParsedComment
 
 
 class RedditScraper(praw.Reddit):
+    # Wrapper around the classic praw api
     def __init__(self, site_name: str, conf_interp: str):
         super(self.__class__, self).__init__(
             site_name=site_name,
